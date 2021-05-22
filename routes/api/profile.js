@@ -34,13 +34,9 @@ router.get("/me", auth, async (req, res) => {
 // @ access   private
 router.post(
   "/",
-  [
-    auth,
-    [
-      check("status", "Status is required").not().isEmpty(),
-      check("skills", "Skills is required").not().isEmpty(),
-    ],
-  ],
+  auth,
+  check("status", "Status is required").not().isEmpty(),
+  check("skills", "Skills is required").not().isEmpty(),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -307,7 +303,7 @@ router.get("/github/:username", async (req, res) => {
       if (error) console.log(error);
 
       if (response.statusCode !== 200) {
-        res.status(404).json({ msg: "No Github profile found" });
+        return res.status(404).json({ msg: "No Github profile found" });
       }
 
       res.json(JSON.parse(body));

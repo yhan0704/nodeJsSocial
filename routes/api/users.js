@@ -5,7 +5,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { check, validationResult } = require("express-validator");
 const config = require("config");
-
 const User = require("../../models/User");
 
 // @ route    POST api/users
@@ -61,14 +60,14 @@ router.post(
       user.password = await bcrypt.hash(password, salt);
 
       await user.save();
-
+      console.log(user);
       //return jsonwebtoken
       const payload = {
         user: {
-          id: user.id,
+          id: user._id,
         },
       };
-
+      console.log(payload);
       //congif.get from npm i config and require("../../config/default.json")
       jwt.sign(
         payload,
