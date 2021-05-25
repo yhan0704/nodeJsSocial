@@ -12,3 +12,6 @@ const { check, validationResult } = require("express-validator");
 [
     check("name", "Name is required")
 ]
+
+for React 
+npm i axios react-router-dom redux react-redux redux-thunk redux-devtools-extension moment react-moment
