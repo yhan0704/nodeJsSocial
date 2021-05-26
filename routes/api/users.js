@@ -14,7 +14,7 @@ router.post(
   "/",
   [
     check("name", "Name is required").not().isEmpty(),
-    check("email", "please check email valid"),
+    check("email", "please check email valid").not().isEmpty(),
     check(
       "password",
       "please enter a password with 6 ro more chracters"
@@ -25,7 +25,7 @@ router.post(
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       //erros.array() will make array like {"errors":[{},{}]}
-      return res.status(400).json({ erros: errors.array() });
+      return res.status(400).json({ errors: errors.array() });
     }
 
     //req.body has user informaion as a object.
@@ -60,14 +60,12 @@ router.post(
       user.password = await bcrypt.hash(password, salt);
 
       await user.save();
-      console.log(user);
       //return jsonwebtoken
       const payload = {
         user: {
           id: user._id,
         },
       };
-      console.log(payload);
       //congif.get from npm i config and require("../../config/default.json")
       jwt.sign(
         payload,

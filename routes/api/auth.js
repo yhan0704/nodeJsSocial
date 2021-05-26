@@ -7,44 +7,39 @@ const { check, validationResult } = require("express-validator");
 const config = require("config");
 const bcrypt = require("bcryptjs");
 
-// @ route    GET api/auth
-// @ desc     Test route
-// @ access   Public
+// @route    GET api/auth
+// @desc     Get user by token
+// @access   Private
 router.get("/", auth, async (req, res) => {
-  console.log(req.user.id);
   try {
     const user = await User.findById(req.user.id).select("-password");
     res.json(user);
   } catch (err) {
+    console.error(err.message);
     res.status(500).send("Server Error");
   }
 });
 
-// @ route    POST api/auth
-// @ desc     Authenticate user & get token
-// @ access   Public
+// @route    POST api/auth
+// @desc     Authenticate user & get token
+// @access   Public
 router.post(
   "/",
   [
-    check("email", "please check email valid"),
-    check(
-      "password",
-      "please enter a password with 6 ro more chracters"
-    ).exists(),
+    check("email", "Please include a valid email").isEmail(),
+    check("password", "Password is required").exists(),
   ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      //erros.array() will make array like {"errors":[{},{}]}
-      return res.status(400).json({ erros: errors.array() });
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    //req.body has user informaion as a object.
     const { email, password } = req.body;
 
     try {
-      //see if user exists
       let user = await User.findOne({ email });
+
       if (!user) {
         return res
           .status(400)
@@ -59,27 +54,23 @@ router.post(
           .json({ errors: [{ msg: "Invalid Credentials" }] });
       }
 
-      //return jsonwebtoken
       const payload = {
         user: {
           id: user.id,
         },
       };
 
-      //congif.get from npm i config and require("../../config/default.json")
       jwt.sign(
         payload,
         config.get("jwtSecret"),
-        { expiresIn: 360000 },
+        { expiresIn: "5 days" },
         (err, token) => {
           if (err) throw err;
           res.json({ token });
         }
       );
-
-      //   res.send("User registered");
     } catch (err) {
-      //   console.log(err.message);
+      console.error(err.message);
       res.status(500).send("Server error");
     }
   }
