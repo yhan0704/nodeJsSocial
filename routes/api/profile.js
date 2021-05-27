@@ -13,20 +13,18 @@ const normalize = require("normalize-url");
 // @ access   private
 router.get("/me", auth, async (req, res) => {
   try {
-    const profile = await Profile.findOne({ user: req.user.id }).populate(
-      "user",
-      ["name", "avatar"]
-    );
+    const profile = await Profile.findOne({ user: req.user.id });
 
     if (!profile) {
       return res.status(400).json({ msg: "There is no profile for this user" });
     }
-    res.json(profile);
+
+    // only populate if profile exists
+    res.json(profile.populate("user", ["name", "avatar"]));
   } catch (err) {
-    console.log(err.message);
+    console.error(err.message);
     res.status(500).send("Server Error");
   }
-  // res.send("Profile route")
 });
 
 // @ route    GET api/profile/
