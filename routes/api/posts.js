@@ -113,36 +113,90 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
-// @route    PUT api/posts/like/:id
-// @desc     Like a post
-// @access   Private
+//@route  PUT api/posts/like/:id
+//@desc   Like a post
+//@access Private
 router.put("/like/:id", auth, async (req, res) => {
   try {
-    let post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id);
 
-    if (post == null)
-      return res.status(404).json({ postnotfound: "No post found" });
-
-    const index = post.likes.findIndex((l) => {
-      return l.user == req.user.id;
-    });
-
-    console.log(index);
-
-    if (index === -1) {
-      post.likes.push({ user: req.user.id });
-    } else {
-      post.likes.splice(index, 1);
+    //check if post has already been liked
+    if (
+      post.likes.filter((like) => like.user.toString() === req.user.id).length >
+      0
+    ) {
+      return res.status(400).json({ msg: "Post already liked" });
     }
+    post.likes.unshift({ user: req.user.id });
 
-    post = await post.save();
+    await post.save();
 
-    res.json(post);
+    res.json(post.likes);
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     res.status(500).send("Server Error");
   }
 });
+
+//@route  PUT api/posts/unlike/:id
+//@desc   Unlike a post
+//@access Private
+router.put("/unlike/:id", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    //check if post has already been liked
+    console.log(post);
+    if (
+      post.likes.filter((like) => like.user.toString() === req.user.id)
+        .length === 0
+    ) {
+      return res.status(400).json({ msg: "Post has not yet been liked" });
+    }
+    //Get remove index
+    const removeIndex = post.likes
+      .map((like) => like.user.toString())
+      .indexOf(req.user.id);
+
+    post.likes.splice(removeIndex, 1);
+
+    await post.save();
+
+    res.json(post.likes);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// // @route    PUT api/posts/like/:id
+// // @desc     Like a post
+// // @access   Private
+// router.put("/like/:id", auth, async (req, res) => {
+//   try {
+//     let post = await Post.findById(req.params.id);
+
+//     if (post == null)
+//       return res.status(404).json({ postnotfound: "No post found" });
+
+//     const index = post.likes.findIndex((l) => {
+//       return l.user == req.user.id;
+//     });
+
+//     if (index === -1) {
+//       post.likes.push({ user: req.user.id });
+//     } else {
+//       post.likes.splice(index, 1);
+//     }
+
+//     post = await post.save();
+
+//     res.json(post);
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 // @route    POST api/posts/comment/:id
 // @desc     Comment on a post

@@ -10,6 +10,8 @@ const User = require("../../models/User");
 // @ route    POST api/users
 // @ desc     Test route
 // @ access   Public
+// @ for Register!!!!!!!
+
 router.post(
   "/",
   [
@@ -63,7 +65,7 @@ router.post(
       //return jsonwebtoken
       const payload = {
         user: {
-          id: user._id,
+          id: user.id,
         },
       };
       //congif.get from npm i config and require("../../config/default.json")
@@ -73,6 +75,7 @@ router.post(
         { expiresIn: 360000 },
         (err, token) => {
           if (err) throw err;
+          //res.json({token:token})
           res.json({ token });
         }
       );

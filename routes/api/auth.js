@@ -23,6 +23,8 @@ router.get("/", auth, async (req, res) => {
 // @route    POST api/auth
 // @desc     Authenticate user & get token
 // @access   Public
+// @for Login!!!!!!!!!!
+
 router.post(
   "/",
   [
@@ -59,13 +61,13 @@ router.post(
           id: user.id,
         },
       };
-
       jwt.sign(
         payload,
         config.get("jwtSecret"),
         { expiresIn: "5 days" },
         (err, token) => {
           if (err) throw err;
+          //res.json({token:token})
           res.json({ token });
         }
       );
