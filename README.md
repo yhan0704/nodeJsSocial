@@ -6,6 +6,11 @@ npm i -D nodemon concurrently
 #run server
 npm run server
 
+node_modules/
+config/production.json
+config/default.json
+client/build
+client/.eslintcache
 
 for the validation
 const { check, validationResult } = require("express-validator"); 
