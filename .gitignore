@@ -1,8 +1,5 @@
 node_modules/
-<<<<<<< HEAD
-config/default.json
-
-
-=======
 config/production.json
->>>>>>> parent of 84a4377... working on heroku
+config/default.json
+client/build
+client/.eslintcache
