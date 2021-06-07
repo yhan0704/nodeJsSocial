@@ -11,6 +11,7 @@ connectDB;
 //can handle json body
 app.use(express.json({ extened: false }));
 
+//Cors warning  <- use install npm cors
 app.use(cors({ origin: true }));
 
 //Define Routes
@@ -18,6 +19,9 @@ app.use("/api/users", require("./routes/api/users"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/posts", require("./routes/api/posts"));
+
+// no need when deploy heroku
+// app.get("/", (req, res) => res.send("API Running"));
 
 // Serve static assets in production
 if (process.env.NODE_ENV === "production") {
